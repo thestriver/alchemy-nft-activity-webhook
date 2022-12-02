@@ -1,0 +1,78 @@
+<html>
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+     // connect to WebSocket server and start listening for notifications
+     let socket = io();
+    let el;
+    let result;
+    socket.on('notification', (notificationBody) => {
+      console.log("got notification");
+      el = document.getElementById('server-notification');
+      el.innerHTML = 'Look what just happened!: ' + notificationBody;
+    });
+    socket.on('addNFTnotif', (notificationBody) => {
+      console.log("got NFT notification", notificationBody);
+      el = document.getElementById('add-notification');
+      el.innerHTML = 'NFT added!: ' + notificationBody;
+      
+    });
+  </script>
+</head>
+<body>
+    <!-- Set up basic HTML inputs for the user to submit the following details: `webhook URL and NFT contract address` -->
+    <p>Fill in the inputs below with the desired contract Address and webhook url</p>
+    <input name="contractAddress" placeholder="contract Address" type="text" maxlength="512" id="contractAddress"/>
+    <input name="webhook_url" placeholder="webhook url" type="text" maxlength="512" id="webhook_url"/>
+    <button class="enableHookButton">Create Your NFT Webhook </button>
+
+  <br />
+  <p>Copy the webhook id from your dashboard</p>
+  <input name="webhook_id" placeholder="webhook_id" type="text" maxlength="512" id="webhook_id"/>
+  <button class="enableNotificationsButton">Enable Notifications for your webhook</button>
+
+  <script>
+    const enableButton = document.querySelector('.enableHookButton');
+
+    const enableNotificationsButton = document.querySelector('.enableNotificationsButton');
+
+    // when clicked, send request to server to register the connected webhook id with Alchemy
+    enableNotificationsButton.addEventListener('click', () => {
+      let webhook_id = document.querySelector('#webhook_id').value;
+      console.log("listen webhook");
+      socket.emit('listen webhook', webhook_id);
+      alert(" Listening to NFT Webhook.")
+    });
+
+    // sends the value of the inputs to the server
+    enableButton.addEventListener('click', () => {
+      console.log("Creating NFT Webhook");
+      let contractAddress = document.querySelector('#contractAddress').value;
+      let tokenid = document.querySelector('#tokenid').value;
+      let webhook_url = document.querySelector('#webhook_url').value;
+      let data = 
+             {
+          "nft_filters": [
+               {
+                    "contract_address": contractAddress,
+                    "token_id": tokenid,
+               }
+          ],
+          "webhook_type": "NFT_ACTIVITY",
+          "network": "ETH_MAINNET",
+          "webhook_url": webhook_url
+      }
+      if (webhook_url && contractAddress && webhook_url ) {
+        socket.emit('register address', data)
+        alert("Creating NFT Webhook.")
+      }
+      else (
+        alert("Fill all input.")
+      )
+    });
+  </script>
+  <p id="server-notification"></p>
+  <p id="add-notification"></p>
+</body>
+
+</html>

@@ -43,7 +43,7 @@ async function addHookNotif(id) {
         method: 'PATCH',
         body: JSON.stringify(body),
         headers: { 'Content-Type': 'application/json' },
-        headers: { 'X-Alchemy-Token': 'PRFeZ0mY6LwMHU0xU8-OQfNBnMEdY2-X'}
+        headers: { 'X-Alchemy-Token': 'AUTH_TOKEN'}
       })
         .then(res => res.json())
         .then(json => console.log("Successfully added address:", json))
@@ -62,7 +62,7 @@ async function addNFTWebhook(data) {
       method: 'POST',
       body: JSON.stringify(data),
       headers: { 'Content-Type': 'application/json' },
-      headers: { 'X-Alchemy-Token': 'PRFeZ0mY6LwMHU0xU8-OQfNBnMEdY2-X'}
+      headers: { 'X-Alchemy-Token': 'AUTH_TOKEN'}
     })
       .then(res => res.json())
       .then(json => io.emit('addNFTnotif', JSON.stringify(json)) )
